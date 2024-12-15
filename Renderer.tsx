@@ -172,6 +172,18 @@ const CanvasKit = await CanvasKitInit({
     resolve(__dirname, 'node_modules', 'canvaskit-wasm', 'bin', 'full', file),
 });
 
+export enum ImageFormat {
+  PNG = 'png',
+  JPEG = 'jpeg',
+  WEBP = 'webp',
+}
+
+const ImageFormatMap = {
+  [ImageFormat.JPEG]: CanvasKit.ImageFormat.JPEG,
+  [ImageFormat.PNG]: CanvasKit.ImageFormat.PNG,
+  [ImageFormat.WEBP]: CanvasKit.ImageFormat.WEBP,
+};
+
 export type RendererProps = {
   width: number;
   height: number;
@@ -219,7 +231,7 @@ export const RenderAck: FunctionComponent<{ id: string; ack: () => void }> = (
 export const Renderer: FunctionComponent<RendererProps> = (
   { width, height, children },
 ) => {
-  const { wg, onDone } = useMainContext();
+  const { wg, onDone, format, quality } = useMainContext();
 
   const id = useId();
 
@@ -242,7 +254,10 @@ export const Renderer: FunctionComponent<RendererProps> = (
         log('Running %s -> %s', id, name);
         await Promise.resolve().then(fn);
       }
-      const bytes = surface.makeImageSnapshot().encodeToBytes();
+      const bytes = surface.makeImageSnapshot().encodeToBytes(
+        ImageFormatMap[format],
+        quality,
+      );
       if (!bytes) {
         throw Error('Failed to encode image');
       }

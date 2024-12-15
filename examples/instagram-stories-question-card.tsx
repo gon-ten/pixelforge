@@ -1,6 +1,13 @@
 #!/usr/bin/env -S deno run -A
 import { FontStyle, LoadFont } from '../components/LoadFont.tsx';
-import { Container, generate, LinearGradient, Renderer, Text } from '../mod.ts';
+import {
+  Container,
+  generate,
+  ImageFormat,
+  LinearGradient,
+  Renderer,
+  Text,
+} from '../mod.ts';
 import { basename, extname } from 'node:path';
 
 function Image() {
@@ -75,8 +82,9 @@ function Image() {
 }
 
 const outFile =
-  basename(import.meta.url).slice(0, -extname(import.meta.url).length) + '.png';
+  basename(import.meta.url).slice(0, -extname(import.meta.url).length) +
+  '.webp';
 
-generate(Image, outFile).catch((e) => {
+generate(Image, { fileName: outFile, format: ImageFormat.WEBP }).catch((e) => {
   console.error(e);
 });

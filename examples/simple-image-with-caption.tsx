@@ -3,6 +3,7 @@ import { LoadFont } from '../components/LoadFont.tsx';
 import {
   Container,
   generate,
+  ImageFormat,
   LinearGradient,
   Picture,
   Renderer,
@@ -40,7 +41,7 @@ function Image() {
         <Text
           fontSize={24}
           y={565}
-          x={50}
+          align='center'
           color='#fff'
           content='AI Generated BMW M4'
         />
@@ -52,6 +53,6 @@ function Image() {
 const outFile =
   basename(import.meta.url).slice(0, -extname(import.meta.url).length) + '.png';
 
-generate(Image, outFile).catch((e) => {
+generate(Image, { fileName: outFile }).catch((e) => {
   console.error(e);
 });

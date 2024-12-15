@@ -3,7 +3,9 @@ import { type ComponentType, createContext, h, render } from 'preact';
 import { useContext } from 'preact/hooks';
 import { WaitGroup } from './utils/wait_group.ts';
 import { writeFile } from 'node:fs/promises';
-export { Renderer } from './Renderer.tsx';
+import { ImageFormat, Renderer } from './Renderer.tsx';
+
+export { ImageFormat, Renderer };
 
 export {
   ClipRect,
@@ -18,8 +20,15 @@ export {
   type TextProps,
 } from './components/index.tsx';
 
+type MainContextProps = {
+  wg: WaitGroup;
+  onDone: (bytes: Uint8Array) => void;
+  format: ImageFormat;
+  quality: number;
+};
+
 export const MainContext = createContext<
-  { wg: WaitGroup; onDone: (bytes: Uint8Array) => void } | null
+  MainContextProps | null
 >(null);
 
 export const useMainContext = () => {
@@ -34,7 +43,15 @@ export const useMainContext = () => {
 
 export async function generate(
   Component: ComponentType,
-  fileName = 'output.png',
+  {
+    fileName,
+    format = ImageFormat.PNG,
+    quality = 100,
+  }: {
+    fileName: string;
+    format?: ImageFormat;
+    quality?: number;
+  },
 ): Promise<void> {
   const browser = new Browser();
   const page = browser.newPage();
@@ -48,6 +65,8 @@ export async function generate(
       value: {
         wg,
         onDone: signal.resolve,
+        format,
+        quality,
       },
     }, [h(Component, null)]),
     page.mainFrame.document.body,

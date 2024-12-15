@@ -1,5 +1,11 @@
 #!/usr/bin/env -S deno run -A
-import { generate, LinearGradient, Renderer, Text } from '../mod.ts';
+import {
+  generate,
+  ImageFormat,
+  LinearGradient,
+  Renderer,
+  Text,
+} from '../mod.ts';
 import { basename, extname } from 'node:path';
 
 function Image() {
@@ -26,8 +32,9 @@ function Image() {
 }
 
 const outFile =
-  basename(import.meta.url).slice(0, -extname(import.meta.url).length) + '.png';
+  basename(import.meta.url).slice(0, -extname(import.meta.url).length) +
+  '.jpeg';
 
-generate(Image, outFile).catch((e) => {
+generate(Image, { fileName: outFile, format: ImageFormat.JPEG }).catch((e) => {
   console.error(e);
 });
