@@ -43,7 +43,6 @@ function Image() {
             width='100%'
             height={64}
             backgroundColor='#333'
-            shadow={{ color: `rgba(0, 0, 0, 0.5)` }}
           >
             <Text
               fontSize={24}
