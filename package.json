@@ -1,0 +1,20 @@
+{
+  "name": "@gon-ten/pixelforge",
+  "version": "0.0.1-beta.1",
+  "type": "module",
+  "main": "./mod.ts",
+  "exports": {
+    ".": "./mod.ts"
+  },
+  "dependencies": {
+    "canvaskit-wasm": "^0.39.1",
+    "debug": "^4.4.0",
+    "happy-dom": "^15.11.7",
+    "preact": "^10.25.2"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2"
+  }
+}
