@@ -11,7 +11,7 @@ import {
   HexColorString,
   RgbaColor,
   RgbaColorString,
-  rgbaColotStringToRgbaColor,
+  rgbaColorStringToRgbaColor,
 } from '../utils/color.ts';
 
 type SizeProps = {
@@ -87,7 +87,7 @@ export const Container: FunctionComponent<ContainerProps> = (
 
       if (shadow) {
         const shadowColor = typeof shadow.color === 'string'
-          ? rgbaColotStringToRgbaColor(shadow.color)
+          ? rgbaColorStringToRgbaColor(shadow.color)
           : shadow.color;
         const shadowPaint = new CanvasKit.Paint();
         shadowPaint.setColor(CanvasKit.Color(...shadowColor));

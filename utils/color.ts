@@ -43,7 +43,7 @@ export function hexToRgba(
 const RGBA_COLOR_REGEX =
   /^rgba\((?<red>(?:[1-9]?\d|1\d{2}|2[0-4]\d|25[0-5])), (?<green>(?:[1-9]?\d|1\d{2}|2[0-4]\d|25[0-5])), (?<blue>(?:[1-9]?\d|1\d{2}|2[0-4]\d|25[0-5])), (?<alpha>(0?[.]\d+)|1)\)$/i;
 
-export function rgbaColotStringToRgbaColor(
+export function rgbaColorStringToRgbaColor(
   rgbaStr: RgbaColorString,
 ): RgbaColor {
   const match = rgbaStr.match(RGBA_COLOR_REGEX);
@@ -65,5 +65,5 @@ export function colorStringToRgbaColor(
   if (isHexColorString(color)) {
     return hexToRgba(color);
   }
-  return rgbaColotStringToRgbaColor(color);
+  return rgbaColorStringToRgbaColor(color);
 }
