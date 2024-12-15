@@ -12,6 +12,7 @@ import { useMainContext } from './mod.ts';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { logger } from './utils/logger.ts';
+import { once } from './utils/once.ts';
 
 type RenderArgs<D extends unknown, S extends Record<string, unknown>> = {
   data: D;
@@ -75,7 +76,11 @@ export const useRenderer = <
     args: { data: D; currentParent: ParentData; state: S },
   ): ParentData;
   afterRender?: AfterRenderHook<D, S>;
-}) => {
+}): {
+  id: string;
+  ack: () => null;
+  getNextParentContext: () => ParentData;
+} => {
   const {
     name,
     renderFn,
@@ -131,7 +136,7 @@ export const useRenderer = <
 
   pushStack.current();
 
-  const ack = () => {
+  const stableAck = useRef(once(() => {
     stack.push([id, name + ' AfterRender', () => {
       stableAfterRender({
         canvas,
@@ -143,27 +148,15 @@ export const useRenderer = <
       });
     }]);
     wg.done();
-  };
-
-  const stableAck = useStableCallback(ack);
+    return null;
+  }));
 
   return {
     id,
-    ack: stableAck,
+    ack: stableAck.current,
     getNextParentContext: stableGetNextParentContext.current,
   };
 };
-
-export function once<T>(fn: (...args: T[]) => void) {
-  let called = false;
-  return () => {
-    if (called) {
-      return;
-    }
-    fn();
-    called = true;
-  };
-}
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url).href);
 
@@ -220,12 +213,10 @@ export const useRenderingContext = () => {
   return ctx;
 };
 
-export const RenderAck: FunctionComponent<{ id: string; ack: () => void }> = (
+export const RenderAck: FunctionComponent<{ id: string; ack: () => null }> = (
   { ack },
 ) => {
-  useState(() => ack());
-
-  return false;
+  return ack();
 };
 
 export const Renderer: FunctionComponent<RendererProps> = (
