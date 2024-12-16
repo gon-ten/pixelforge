@@ -1,5 +1,6 @@
 #!/usr/bin/env -S deno run -A
 import { FontStyle, LoadFont } from '../components/LoadFont.tsx';
+import { Parragraph } from '../components/Parragraph.tsx';
 import {
   Container,
   generate,
@@ -74,6 +75,13 @@ function Image() {
           content='28'
           align='center'
           fontStyle={FontStyle.Bold}
+        />
+        <Parragraph
+          content='Swipe up to ask me anything'
+          color='#fff'
+          fontSize={16}
+          y={854 - 32}
+          align='center'
         />
       </LinearGradient>
     </Renderer>
