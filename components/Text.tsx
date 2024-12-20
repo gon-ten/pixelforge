@@ -1,12 +1,8 @@
-import { Fragment, type FunctionComponent } from 'preact';
-import {
-  RenderAck,
-  useFontManager,
-  useLogger,
-  useRenderer,
-} from '../Renderer.tsx';
+import { type FunctionComponent } from 'preact';
 import { hexToRgba } from '../utils/color.ts';
 import { FontStyle } from './LoadFont.tsx';
+import { useFontManager, useLogger } from '../core/hooks.ts';
+import { Component, useRenderer } from '../core/render.ts';
 
 export type TextProps = {
   fontFamily?: string;
@@ -37,9 +33,9 @@ export const Text: FunctionComponent<TextProps> = (
   const log = useLogger('Text');
   const fontManager = useFontManager();
 
-  const { id, ack } = useRenderer({
+  const renderer = useRenderer({
     name: 'Text',
-    renderFn: ({ canvas, surface, CanvasKit, parentData }) => {
+    render: ({ canvas, surface, CanvasKit, parentData }) => {
       let renderX = parentData.x + (x ?? 0);
       const renderY = parentData.y + (y ?? 0);
 
@@ -96,9 +92,5 @@ export const Text: FunctionComponent<TextProps> = (
     },
   });
 
-  return (
-    <Fragment>
-      <RenderAck id={id} ack={ack} />
-    </Fragment>
-  );
+  return <Component {...renderer} />;
 };

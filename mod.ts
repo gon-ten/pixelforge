@@ -3,7 +3,8 @@ import { type ComponentType, createContext, h, render } from 'preact';
 import { useContext } from 'preact/hooks';
 import { WaitGroup } from './utils/wait_group.ts';
 import { writeFile } from 'node:fs/promises';
-import { ImageFormat, Renderer } from './Renderer.tsx';
+import { Renderer } from './Renderer.tsx';
+import { ImageFormat } from './core/constants.ts';
 
 export { ImageFormat, Renderer };
 

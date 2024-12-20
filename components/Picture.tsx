@@ -1,12 +1,8 @@
 import type { FunctionComponent } from 'preact';
-import {
-  type MandatoryProps,
-  ParentContext,
-  RenderAck,
-  useLogger,
-  useRenderer,
-} from '../Renderer.tsx';
 import { loadAsset } from '../utils/load_asset.ts';
+import { MandatoryProps } from '../Renderer.tsx';
+import { useLogger } from '../core/hooks.ts';
+import { Component, useRenderer } from '../core/render.ts';
 
 export type PictureProps = MandatoryProps & {
   region?: [x: number, y: number, width: number, height: number];
@@ -23,7 +19,7 @@ export const Picture: FunctionComponent<PictureProps> = (
 ) => {
   const log = useLogger('Picture');
 
-  const { getNextParentContext, ack, id } = useRenderer<
+  const renderer = useRenderer<
     LocalState,
     Uint8Array
   >({
@@ -36,7 +32,7 @@ export const Picture: FunctionComponent<PictureProps> = (
       }
       return src;
     },
-    renderFn: ({ CanvasKit, canvas, surface, data, parentData, state }) => {
+    render: ({ CanvasKit, canvas, surface, data, parentData, state }) => {
       const renderX = parentData.x + x;
       const renderY = parentData.y + y;
 
@@ -87,9 +83,8 @@ export const Picture: FunctionComponent<PictureProps> = (
   });
 
   return (
-    <ParentContext.Provider value={{ get: getNextParentContext }}>
+    <Component {...renderer}>
       {children}
-      <RenderAck id={id} ack={ack} />
-    </ParentContext.Provider>
+    </Component>
   );
 };

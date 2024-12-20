@@ -1,18 +1,14 @@
 import type { FunctionComponent } from 'preact';
 import {
-  ParentContext,
-  RenderAck,
-  useLogger,
-  useParent,
-  useRenderer,
-} from '../Renderer.tsx';
-import {
   colorStringToRgbaColor,
   HexColorString,
   RgbaColor,
   RgbaColorString,
   rgbaColorStringToRgbaColor,
 } from '../utils/color.ts';
+import { Component, useRenderer } from '../core/render.ts';
+import { useLogger } from '../core/hooks.ts';
+import { useParent } from '../core/ParentContext.tsx';
 
 type SizeProps = {
   width: number | `${number}%`;
@@ -54,7 +50,7 @@ export const Container: FunctionComponent<ContainerProps> = (
   const log = useLogger('Container');
   const { width, height } = getDimensionsFromSizeProps(otherProps);
 
-  const parent = useParent();
+  const parent = useParent().get();
 
   const renderY = parent.y + y;
   const renderX = parent.x + x;
@@ -66,7 +62,7 @@ export const Container: FunctionComponent<ContainerProps> = (
     ? (parseInt(height) / 100) * parent.height
     : height;
 
-  const { id, getNextParentContext, ack } = useRenderer<LocalState>({
+  const renderer = useRenderer<LocalState>({
     name: 'Container',
     afterRender({ canvas, state }) {
       if (typeof state.savingPoint !== 'undefined') {
@@ -74,7 +70,7 @@ export const Container: FunctionComponent<ContainerProps> = (
         log('Restored to count %d', state.savingPoint);
       }
     },
-    renderFn({ canvas, CanvasKit, state }) {
+    render({ canvas, CanvasKit, state }) {
       const [rx, ry] = Array.isArray(borderRadius)
         ? borderRadius
         : [borderRadius, borderRadius];
@@ -141,12 +137,7 @@ export const Container: FunctionComponent<ContainerProps> = (
     },
   });
 
-  return (
-    <ParentContext.Provider value={{ get: getNextParentContext }}>
-      {children}
-      <RenderAck id={id} ack={ack} />
-    </ParentContext.Provider>
-  );
+  return <Component {...renderer}>{children}</Component>;
 };
 
 function getDimensionsFromSizeProps(sizeProps: SizeProps) {

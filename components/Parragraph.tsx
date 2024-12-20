@@ -1,15 +1,18 @@
-import { Fragment, type FunctionComponent } from 'preact';
-import { RenderAck, useLogger, useRenderer } from '../Renderer.tsx';
+import { type FunctionComponent } from 'preact';
 import { hexToRgba } from '../utils/color.ts';
 import { FontStyle } from './LoadFont.tsx';
 import { readFileBytes } from '../utils/fs.ts';
+import { Component, useRenderer } from '../core/render.ts';
+import { useLogger } from '../core/hooks.ts';
+
+type ContentArray = [content: string][];
 
 export type TextProps = {
   fontFamily?: string;
   fontSize?: number;
   fontStyle?: FontStyle;
   color?: `#${string}` | [r: number, g: number, b: number, a?: number];
-  content: string;
+  content: string | ContentArray;
   children?: never;
   x?: number;
   y?: number;
@@ -29,11 +32,11 @@ export const Parragraph: FunctionComponent<TextProps> = (
     width = '100%',
   },
 ) => {
-  const log = useLogger('Text');
+  const log = useLogger('Parragraph');
 
-  const { id, ack } = useRenderer({
+  const renderer = useRenderer({
     name: 'Text',
-    renderFn: async ({ canvas, surface, CanvasKit, parentData }) => {
+    render: async ({ canvas, surface, CanvasKit, parentData }) => {
       const renderX = parentData.x + (x ?? 0);
       const renderY = parentData.y + (y ?? 0);
 
@@ -67,7 +70,13 @@ export const Parragraph: FunctionComponent<TextProps> = (
           fontCollection,
         );
 
-      parragraphBuilder.addText(content);
+      if (Array.isArray(content)) {
+        for (const [itemContent] of content) {
+          parragraphBuilder.addText(itemContent);
+        }
+      } else {
+        parragraphBuilder.addText(content);
+      }
 
       const containerWidth = typeof width === 'string'
         ? (parseInt(width) / 100) * parentData.width
@@ -93,9 +102,5 @@ export const Parragraph: FunctionComponent<TextProps> = (
     },
   });
 
-  return (
-    <Fragment>
-      <RenderAck id={id} ack={ack} />
-    </Fragment>
-  );
+  return <Component {...renderer} />;
 };

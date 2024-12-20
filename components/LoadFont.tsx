@@ -1,11 +1,9 @@
 import { type FunctionComponent } from 'preact';
-import {
-  useFontContext,
-  useLogger,
-  useRenderingContext,
-} from '../Renderer.tsx';
+import { useRenderingContext } from '../Renderer.tsx';
 import { loadAsset } from '../utils/load_asset.ts';
 import { useId } from 'preact/hooks';
+import { useLogger } from '../core/hooks.ts';
+import { useFontContext } from '../core/FontContext.tsx';
 
 export enum FontStyle {
   Thin = 'thin',

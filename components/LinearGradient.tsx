@@ -1,12 +1,8 @@
 import type { FunctionComponent } from 'preact';
-import {
-  ParentContext,
-  RenderAck,
-  useLogger,
-  useParent,
-  useRenderer,
-} from '../Renderer.tsx';
 import { hexToRgba } from '../utils/color.ts';
+import { Component, useRenderer } from '../core/render.ts';
+import { useLogger } from '../core/hooks.ts';
+import { useParent } from '../core/ParentContext.tsx';
 
 export type LinearGradientProps = {
   x?: number;
@@ -24,7 +20,7 @@ export const LinearGradient: FunctionComponent<LinearGradientProps> = (
 ) => {
   const log = useLogger('LinearGradient');
 
-  const parent = useParent();
+  const parent = useParent().get();
 
   const computedWidth = typeof width === 'string'
     ? (parseInt(width) / 100) * parent.width
@@ -37,9 +33,9 @@ export const LinearGradient: FunctionComponent<LinearGradientProps> = (
   const renderX = parent.x + (x ?? 0);
   const renderY = parent.y + (y ?? 0);
 
-  const { id, getNextParentContext, ack } = useRenderer({
+  const renderer = useRenderer({
     name: 'LinearGradient',
-    renderFn: ({ canvas, surface, CanvasKit }) => {
+    render: ({ canvas, surface, CanvasKit }) => {
       const startPoint = [renderX, renderY];
       const endPoint = [renderX + computedWidth, renderY + computedHeight];
       const gradientShader = CanvasKit.Shader.MakeLinearGradient(
@@ -75,14 +71,5 @@ export const LinearGradient: FunctionComponent<LinearGradientProps> = (
     },
   });
 
-  return (
-    <ParentContext.Provider
-      value={{
-        get: getNextParentContext,
-      }}
-    >
-      {children}
-      <RenderAck id={id} ack={ack} />
-    </ParentContext.Provider>
-  );
+  return <Component {...renderer}>{children}</Component>;
 };

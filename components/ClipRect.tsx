@@ -1,11 +1,7 @@
 import type { FunctionComponent } from 'preact';
-import {
-  ParentContext,
-  RenderAck,
-  useLogger,
-  useParent,
-  useRenderer,
-} from '../Renderer.tsx';
+import { Component, useRenderer } from '../core/render.ts';
+import { useLogger } from '../core/hooks.ts';
+import { useParent } from '../core/ParentContext.tsx';
 
 type SizeProps = {
   width: number;
@@ -32,18 +28,18 @@ export const ClipRect: FunctionComponent<ClipRectProps> = (
   const log = useLogger('ClipRect');
   const { width, height } = getDimensionsFromSizeProps(otherProps);
 
-  const parent = useParent();
+  const parent = useParent().get();
 
   const renderY = parent.y + y;
   const renderX = parent.x + x;
 
-  const { id, getNextParentContext, ack } = useRenderer<LocalState>({
+  const renderer = useRenderer<LocalState>({
     name: 'ClipRect',
     afterRender({ canvas, state }) {
       canvas.restoreToCount(state.savingPoint);
       log('Restored to count %d', state.savingPoint);
     },
-    renderFn({ canvas, CanvasKit, state }) {
+    render({ canvas, CanvasKit, state }) {
       const [rx, ry] = Array.isArray(borderRadius)
         ? borderRadius
         : [borderRadius, borderRadius];
@@ -73,12 +69,7 @@ export const ClipRect: FunctionComponent<ClipRectProps> = (
     },
   });
 
-  return (
-    <ParentContext.Provider value={{ get: getNextParentContext }}>
-      {children}
-      <RenderAck id={id} ack={ack} />
-    </ParentContext.Provider>
-  );
+  return <Component {...renderer}>{children}</Component>;
 };
 
 function getDimensionsFromSizeProps(sizeProps: SizeProps) {
