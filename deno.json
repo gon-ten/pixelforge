@@ -14,11 +14,9 @@
     "lib": ["deno.window", "esnext"]
   },
   "fmt": {
-    "options": {
-      "singleQuote": true,
-      "lineWidth": 80,
-      "useTabs": false,
-      "indentWidth": 2
-    }
+    "singleQuote": true,
+    "lineWidth": 80,
+    "useTabs": false,
+    "indentWidth": 2
   }
 }

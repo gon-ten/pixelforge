@@ -17,6 +17,7 @@
     "npm:canvaskit-wasm@~0.39.1": "0.39.1",
     "npm:debug@^4.4.0": "4.4.0",
     "npm:happy-dom@^15.11.7": "15.11.7",
+    "npm:husky@^9.1.7": "9.1.7",
     "npm:preact@^10.25.2": "10.25.2",
     "npm:tsx@^4.19.2": "4.19.2"
   },
@@ -223,6 +224,9 @@
         "whatwg-mimetype"
       ]
     },
+    "husky@9.1.7": {
+      "integrity": "sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA=="
+    },
     "ms@2.1.3": {
       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
     },
@@ -271,6 +275,7 @@
         "npm:canvaskit-wasm@~0.39.1",
         "npm:debug@^4.4.0",
         "npm:happy-dom@^15.11.7",
+        "npm:husky@^9.1.7",
         "npm:preact@^10.25.2",
         "npm:tsx@^4.19.2"
       ]
