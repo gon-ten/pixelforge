@@ -1,3 +1,2 @@
 deno check **/*.ts **/*tsx
 deno lint **/*.ts **/*.tsx
-deno fmt
