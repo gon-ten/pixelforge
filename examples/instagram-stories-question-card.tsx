@@ -77,12 +77,13 @@ function Image() {
           fontStyle={FontStyle.Bold}
         />
         <Parragraph
-          content='Swipe up to ask me anything'
           color='#fff'
           fontSize={16}
           y={854 - 32}
           align='center'
-        />
+        >
+          Swipe up to ask me anything
+        </Parragraph>
       </LinearGradient>
     </Renderer>
   );

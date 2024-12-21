@@ -10,10 +10,12 @@
     "canvaskit-wasm": "^0.39.1",
     "debug": "^4.4.0",
     "happy-dom": "^15.11.7",
+    "lodash.merge": "^4.6.2",
     "preact": "^10.25.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
+    "@types/lodash.merge": "^4.6.9",
     "@types/node": "^22.10.2",
     "husky": "^9.1.7",
     "tsx": "^4.19.2"
