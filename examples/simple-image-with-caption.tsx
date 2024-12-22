@@ -15,8 +15,8 @@ function Image() {
     <Renderer width={800} height={600}>
       <LoadFont
         default
-        family='Roboto'
-        src='./assets/Roboto-Regular.ttf'
+        family='NotoSans'
+        src='./assets/NotoSans-VariableFont.ttf'
       />
       <LinearGradient
         width='100%'
