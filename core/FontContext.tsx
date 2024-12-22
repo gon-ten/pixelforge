@@ -2,7 +2,13 @@ import { createContext, type FunctionComponent, RefObject } from 'preact';
 import { CanvasKit, type Font, type Typeface } from 'canvaskit-wasm';
 import { useContext, useRef } from 'preact/hooks';
 import { FontStyle } from '../components/LoadFont.tsx';
-import { useLogger } from './hooks.ts';
+import { loadAsset } from '../utils/load_asset.ts';
+import { logger } from '../utils/logger.ts';
+
+const log = logger.extend('FontContextProvider');
+
+const NotoSans = await loadAsset('../assets/NotoSans-VariableFont.ttf');
+const NotoColorEmoji = await loadAsset('../assets/NotoColorEmoji-Regular.ttf');
 
 type FontContextValue = {
   typefaces: {
@@ -41,21 +47,23 @@ export const useFontContext = () => {
   return ctx;
 };
 
-export const useFontManager = (
-  family: string[],
-) => {
+export const useFontManager = () => {
   const { typefaces } = useFontContext();
 
   return {
-    allRaw(): [family: string, bytes: Uint8Array][] {
+    allRaw(
+      family: string[],
+    ): [family: string, bytes: Uint8Array][] {
       const result: [family: string, bytes: Uint8Array][] = [];
 
       for (const f of family) {
-        if (!typefaces[f]) {
-          throw Error(`Font family ${f} is not registered`);
+        const typeface = typefaces[f];
+
+        if (!typeface) {
+          continue;
         }
 
-        const allBytes = Object.values(typefaces[f].styles).map((style) =>
+        const allBytes = Object.values(typeface.styles).map((style) =>
           style.raw
         );
 
@@ -70,11 +78,11 @@ export const useFontManager = (
 
 export const FontContextProvider: FunctionComponent<{ CanvasKit: CanvasKit }> =
   ({ children, CanvasKit }) => {
-    const log = useLogger('FontContextProvider');
-
     const defaultTypeFace = useRef<string | undefined>();
 
-    const typefaces = useRef<FontContextValue['typefaces']>({});
+    const typefaces = useRef<FontContextValue['typefaces']>(
+      defaultTypepaces(CanvasKit),
+    );
 
     const craftedFonts = useRef<
       FontContextValue['craftedFonts']
@@ -121,3 +129,43 @@ export const FontContextProvider: FunctionComponent<{ CanvasKit: CanvasKit }> =
       </FontContext.Provider>
     );
   };
+
+function defaultTypepaces(CanvasKit: CanvasKit) {
+  const typefaces: FontContextValue['typefaces'] = {};
+
+  const notoSansTypeface = CanvasKit.Typeface.MakeFreeTypeFaceFromData(
+    NotoSans,
+  );
+
+  if (notoSansTypeface) {
+    typefaces['NotoSans'] = {
+      styles: {
+        [FontStyle.Regular]: {
+          raw: NotoSans,
+          typeface: notoSansTypeface,
+        },
+      },
+    };
+  } else {
+    log('Failed to load NotoSans font');
+  }
+
+  const notoColorEmojiTypeface = CanvasKit.Typeface.MakeFreeTypeFaceFromData(
+    NotoColorEmoji,
+  );
+
+  if (notoColorEmojiTypeface) {
+    typefaces['NotoColorEmoji'] = {
+      styles: {
+        [FontStyle.Regular]: {
+          raw: NotoColorEmoji,
+          typeface: notoColorEmojiTypeface,
+        },
+      },
+    };
+  } else {
+    log('Failed to load NotoColorEmoji font');
+  }
+
+  return typefaces;
+}

@@ -1,23 +1,17 @@
 #!/usr/bin/env -S deno run -A
-import { LoadFont } from '../components/LoadFont.tsx';
 import {
   Container,
   generate,
   LinearGradient,
+  Paragraph,
   Picture,
   Renderer,
-  Text,
 } from '../mod.ts';
 import { basename, extname } from 'node:path';
 
 function Image() {
   return (
     <Renderer width={800} height={600}>
-      <LoadFont
-        default
-        family='NotoSans'
-        src='./assets/NotoSans-VariableFont.ttf'
-      />
       <LinearGradient
         width='100%'
         height='100%'
@@ -37,13 +31,14 @@ function Image() {
             region={[300, 300, 1000, 800]}
           />
         </Container>
-        <Text
+        <Paragraph
           fontSize={24}
           y={565}
           align='center'
           color='#fff'
-          content='AI Generated BMW M4'
-        />
+        >
+          AI Generated BMW M4
+        </Paragraph>
       </LinearGradient>
     </Renderer>
   );

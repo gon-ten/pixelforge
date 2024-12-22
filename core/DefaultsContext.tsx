@@ -9,6 +9,7 @@ export type ContextValue = {
   textStyle: {
     fontFamily: string | string[];
     fontSize: number;
+    lineHeight: number;
     fontStyle: FontStyle;
     color: ColorValue;
     align: 'left' | 'center';
@@ -39,6 +40,7 @@ export const DefaultsProvider: FunctionComponent<DefaultsProvider> = (
         textStyle: {
           fontFamily: ['NotoSans', 'NotoColorEmoji'],
           fontSize: 16,
+          lineHeight: 1,
           fontStyle: FontStyle.Regular,
           color: '#FFF',
           align: 'left',

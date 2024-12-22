@@ -21,6 +21,7 @@ export type ParagraphProps = {
   y?: number;
   width?: number | `${number}%`;
   align?: 'left' | 'center';
+  lineHeight?: number;
 };
 
 export const Paragraph: FunctionComponent<ParagraphProps> = (
@@ -32,6 +33,7 @@ export const Paragraph: FunctionComponent<ParagraphProps> = (
     color = '#000',
     width = '100%',
     children,
+    lineHeight,
   },
 ) => {
   const log = useLogger('Paragraph');
@@ -40,7 +42,7 @@ export const Paragraph: FunctionComponent<ParagraphProps> = (
 
   const fontFamilies = arrify(fontFamily ?? defaults.textStyle.fontFamily);
 
-  const fontManager = useFontManager(fontFamilies);
+  const fontManager = useFontManager();
 
   const renderer = useRenderer({
     name: 'Paragraph',
@@ -50,7 +52,7 @@ export const Paragraph: FunctionComponent<ParagraphProps> = (
 
       const typefaceFontManager = CanvasKit.TypefaceFontProvider.Make();
 
-      fontManager.allRaw().forEach(([family, bytes]) => {
+      fontManager.allRaw(fontFamilies).forEach(([family, bytes]) => {
         typefaceFontManager.registerFont(
           bytes,
           family,
@@ -66,6 +68,7 @@ export const Paragraph: FunctionComponent<ParagraphProps> = (
         color: CanvasKit.Color(
           ...anyColorFormatToColor(color ?? defaults.textStyle.color),
         ),
+        heightMultiplier: lineHeight ?? defaults.textStyle.lineHeight,
       });
 
       const paragraphStyle = new CanvasKit.ParagraphStyle(

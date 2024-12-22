@@ -3,8 +3,8 @@ import {
   generate,
   ImageFormat,
   LinearGradient,
+  Paragraph,
   Renderer,
-  Text,
 } from '../mod.ts';
 import { basename, extname } from 'node:path';
 
@@ -19,13 +19,14 @@ function Image() {
           [1, '#E52B2B'],
         ]}
       >
-        <Text
-          content='Hello, World!'
+        <Paragraph
           color='#fff'
           fontSize={48}
           y={(600 / 2) - (48 / 2)}
           align='center'
-        />
+        >
+          Hello, World!
+        </Paragraph>
       </LinearGradient>
     </Renderer>
   );

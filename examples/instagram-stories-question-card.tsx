@@ -1,5 +1,4 @@
 #!/usr/bin/env -S deno run -A
-import { LoadFont } from '../components/LoadFont.tsx';
 import { Paragraph } from '../components/Paragraph.tsx';
 import {
   Container,
@@ -7,23 +6,12 @@ import {
   ImageFormat,
   LinearGradient,
   Renderer,
-  Text,
 } from '../mod.ts';
 import { basename, extname } from 'node:path';
 
 function Image() {
   return (
     <Renderer width={480} height={854}>
-      <LoadFont
-        default
-        family='NotoSans'
-        src='./assets/NotoSans-VariableFont.ttf'
-      />
-      <LoadFont
-        default
-        family='NotoColorEmoji'
-        src='./assets/NotoColorEmoji-Regular.ttf'
-      />
       <LinearGradient
         width='100%'
         height='100%'
@@ -44,13 +32,14 @@ function Image() {
             height={64}
             backgroundColor='#333'
           >
-            <Text
+            <Paragraph
               fontSize={24}
               y={(64 / 2) - (24 / 2)}
-              content='Ask me anything'
               color='#fff'
               align='center'
-            />
+            >
+              Ask me anything
+            </Paragraph>
           </Container>
 
           <Container
@@ -58,13 +47,14 @@ function Image() {
             height={200 - 64}
             y={64}
           >
-            <Text
+            <Paragraph
               fontSize={24}
               y={((200 - 64) / 2) - (24 / 2)}
-              content='How old are you?'
               color='#000'
               align='center'
-            />
+            >
+              How old are you?
+            </Paragraph>
           </Container>
         </Container>
         <Paragraph
