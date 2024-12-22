@@ -3,3 +3,4 @@ export { Picture, type PictureProps } from './Picture.tsx';
 export { LinearGradient, type LinearGradientProps } from './LinearGradient.tsx';
 export { ClipRect, type ClipRectProps } from './ClipRect.tsx';
 export { Container, type ContainerProps } from './Container.tsx';
+export { Paragraph, type ParagraphProps } from './Paragraph.tsx';

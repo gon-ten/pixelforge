@@ -7,7 +7,12 @@ import { useLogger } from './hooks.ts';
 type FontContextValue = {
   typefaces: {
     [family: string]: {
-      [style: string]: Typeface;
+      styles: Partial<
+        Record<FontStyle, {
+          raw: Uint8Array;
+          typeface: Typeface;
+        }>
+      >;
     };
   };
   craftedFonts: {
@@ -34,6 +39,33 @@ export const useFontContext = () => {
     throw Error('FontContext is not provided');
   }
   return ctx;
+};
+
+export const useFontManager = (
+  family: string[],
+) => {
+  const { typefaces } = useFontContext();
+
+  return {
+    allRaw(): [family: string, bytes: Uint8Array][] {
+      const result: [family: string, bytes: Uint8Array][] = [];
+
+      for (const f of family) {
+        if (!typefaces[f]) {
+          throw Error(`Font family ${f} is not registered`);
+        }
+
+        const allBytes = Object.values(typefaces[f].styles).map((style) =>
+          style.raw
+        );
+
+        for (const bytes of allBytes) {
+          result.push([f, bytes]);
+        }
+      }
+      return result;
+    },
+  };
 };
 
 export const FontContextProvider: FunctionComponent<{ CanvasKit: CanvasKit }> =
@@ -66,8 +98,13 @@ export const FontContextProvider: FunctionComponent<{ CanvasKit: CanvasKit }> =
           }
         }
 
-        typefaces.current[family] ??= {};
-        typefaces.current[family][style] = typeface;
+        typefaces.current[family] ??= {
+          styles: {},
+        };
+        typefaces.current[family].styles[style] = {
+          raw: bytes,
+          typeface,
+        };
       },
     );
 

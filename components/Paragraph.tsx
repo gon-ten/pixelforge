@@ -4,90 +4,96 @@ import {
   toChildArray,
   VNode,
 } from 'preact';
-import { hexToRgba } from '../utils/color.ts';
-import { FontStyle } from './LoadFont.tsx';
-import { readFileBytes } from '../utils/fs.ts';
+import { anyColorFormatToColor, ColorValue } from '../utils/color.ts';
 import { Component, useRenderer } from '../core/render.ts';
 import { useLogger } from '../core/hooks.ts';
 import { CanvasKit, type TextStyle } from 'canvaskit-wasm';
 import merge from 'lodash.merge';
+import { useDefaults } from '../core/DefaultsContext.tsx';
+import { arrify } from '../utils/arrify.ts';
+import { useFontManager } from '../core/FontContext.tsx';
 
-export type TextProps = {
-  fontFamily?: string;
+export type ParagraphProps = {
+  fontFamily?: string | string[];
   fontSize?: number;
-  fontStyle?: FontStyle;
-  color?: `#${string}` | [r: number, g: number, b: number, a?: number];
+  color?: ColorValue;
   x?: number;
   y?: number;
   width?: number | `${number}%`;
   align?: 'left' | 'center';
 };
 
-export const Parragraph: FunctionComponent<TextProps> = (
+export const Paragraph: FunctionComponent<ParagraphProps> = (
   {
-    // fontFamily,
-    fontSize = 16,
-    // fontStyle = FontStyle.Regular,
+    fontFamily,
+    fontSize,
     x = 0,
     y = 0,
-    color = [0, 0, 0],
+    color = '#000',
     width = '100%',
     children,
   },
 ) => {
-  const log = useLogger('Parragraph');
+  const log = useLogger('Paragraph');
+
+  const defaults = useDefaults();
+
+  const fontFamilies = arrify(fontFamily ?? defaults.textStyle.fontFamily);
+
+  const fontManager = useFontManager(fontFamilies);
 
   const renderer = useRenderer({
-    name: 'Text',
-    render: async ({ canvas, surface, CanvasKit, parentData }) => {
+    name: 'Paragraph',
+    render({ canvas, surface, CanvasKit, parentData }) {
       const renderX = parentData.x + (x ?? 0);
       const renderY = parentData.y + (y ?? 0);
 
       const typefaceFontManager = CanvasKit.TypefaceFontProvider.Make();
-      // TODO: Implement font loading or modify this to use the font manager
-      typefaceFontManager.registerFont(
-        await readFileBytes('../examples/assets/Roboto-Regular.ttf'),
-        'Roboto-Regular',
-      );
+
+      fontManager.allRaw().forEach(([family, bytes]) => {
+        typefaceFontManager.registerFont(
+          bytes,
+          family,
+        );
+      });
 
       const fontCollection = CanvasKit.FontCollection.Make();
       fontCollection.setDefaultFontManager(typefaceFontManager);
 
       const baseTextStyle: TextStyle = new CanvasKit.TextStyle({
-        fontFamilies: ['Roboto-Regular'],
-        halfLeading: true,
-        fontSize,
+        fontFamilies,
+        fontSize: fontSize ?? defaults.textStyle.fontSize,
         color: CanvasKit.Color(
-          ...(typeof color === 'string' ? hexToRgba(color) : color),
+          ...anyColorFormatToColor(color ?? defaults.textStyle.color),
         ),
       });
 
-      const parragraphStyle = new CanvasKit.ParagraphStyle(
+      const paragraphStyle = new CanvasKit.ParagraphStyle(
         {
           textStyle: baseTextStyle,
           textAlign: CanvasKit.TextAlign.Center,
         },
       );
 
-      const parragraphBuilder = CanvasKit.ParagraphBuilder
+      const paragraphBuilder = CanvasKit.ParagraphBuilder
         .MakeFromFontCollection(
-          parragraphStyle,
+          paragraphStyle,
           fontCollection,
         );
 
       for (const itemContent of toChildArray(children)) {
         if (typeof itemContent === 'string') {
-          parragraphBuilder.addText(itemContent);
+          paragraphBuilder.addText(itemContent);
         } else if (isValidElement(itemContent)) {
           const partialTextStyle = getFontStyleByVNodeType(
             itemContent,
             CanvasKit,
           );
-          parragraphBuilder.pushStyle(
+          paragraphBuilder.pushStyle(
             merge({}, baseTextStyle, partialTextStyle),
           );
-          parragraphBuilder.addText(String(itemContent.props.children));
-          parragraphBuilder.pop();
+          paragraphBuilder.addText(String(itemContent.props.children));
+          paragraphBuilder.pop();
         }
       }
 
@@ -95,18 +101,18 @@ export const Parragraph: FunctionComponent<TextProps> = (
         ? (parseInt(width) / 100) * parentData.width
         : width;
 
-      const parragraph = parragraphBuilder.build();
-      parragraph.layout(containerWidth);
+      const paragraph = paragraphBuilder.build();
+      paragraph.layout(containerWidth);
 
       canvas.drawParagraph(
-        parragraph,
+        paragraph,
         renderX,
         renderY,
       );
 
-      parragraph.delete();
+      paragraph.delete();
       typefaceFontManager.delete();
-      parragraphBuilder.delete();
+      paragraphBuilder.delete();
       surface.flush();
       log('Rendered Parragraph at %d %d', renderX, renderY);
     },

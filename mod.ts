@@ -15,6 +15,8 @@ export {
   type ContainerProps,
   LinearGradient,
   type LinearGradientProps,
+  Paragraph,
+  type ParagraphProps,
   Picture,
   type PictureProps,
   Text,

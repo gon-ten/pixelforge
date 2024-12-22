@@ -9,6 +9,7 @@ import { ParentContext } from './core/ParentContext.tsx';
 import { useLogger } from './core/hooks.ts';
 import { FontContextProvider } from './core/FontContext.tsx';
 import { ImageFormat } from './core/constants.ts';
+import { DefaultsProvider } from './core/DefaultsContext.tsx';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url).href);
 
@@ -103,27 +104,29 @@ export const Renderer: FunctionComponent<RendererProps> = (
   }, [surface, wg]);
 
   return (
-    <FontContextProvider CanvasKit={CanvasKit}>
-      <RenderingContext.Provider
-        value={{
-          canvas,
-          wg,
-          size: { width, height },
-          surface,
-          CanvasKit,
-          stack: stack.current,
-        }}
-      >
-        <ParentContext.Provider
+    <DefaultsProvider>
+      <FontContextProvider CanvasKit={CanvasKit}>
+        <RenderingContext.Provider
           value={{
-            get() {
-              return { id, x: 0, y: 0, width, height };
-            },
+            canvas,
+            wg,
+            size: { width, height },
+            surface,
+            CanvasKit,
+            stack: stack.current,
           }}
         >
-          {children}
-        </ParentContext.Provider>
-      </RenderingContext.Provider>
-    </FontContextProvider>
+          <ParentContext.Provider
+            value={{
+              get() {
+                return { id, x: 0, y: 0, width, height };
+              },
+            }}
+          >
+            {children}
+          </ParentContext.Provider>
+        </RenderingContext.Provider>
+      </FontContextProvider>
+    </DefaultsProvider>
   );
 };

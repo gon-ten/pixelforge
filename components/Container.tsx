@@ -1,10 +1,11 @@
 import type { FunctionComponent } from 'preact';
 import {
+  anyColorFormatToColor,
   colorStringToRgbaColor,
+  ColorValue,
   HexColorString,
   RgbaColor,
   RgbaColorString,
-  rgbaColorStringToRgbaColor,
 } from '../utils/color.ts';
 import { Component, useRenderer } from '../core/render.ts';
 import { useLogger } from '../core/hooks.ts';
@@ -24,7 +25,7 @@ export type ContainerProps =
     borderRadius?: number | [x: number, y: number];
     shadow?: {
       sigma?: number;
-      color: RgbaColorString | RgbaColor;
+      color: ColorValue;
     };
     overflow?: 'hidden' | 'visible';
     backgroundColor?: RgbaColorString | RgbaColor | HexColorString;
@@ -83,7 +84,7 @@ export const Container: FunctionComponent<ContainerProps> = (
 
       if (shadow) {
         const shadowColor = typeof shadow.color === 'string'
-          ? rgbaColorStringToRgbaColor(shadow.color)
+          ? anyColorFormatToColor(shadow.color)
           : shadow.color;
         const shadowPaint = new CanvasKit.Paint();
         shadowPaint.setColor(CanvasKit.Color(...shadowColor));

@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'preact';
-import { hexToRgba } from '../utils/color.ts';
+import { anyColorFormatToColor, ColorValue } from '../utils/color.ts';
 import { Component, useRenderer } from '../core/render.ts';
 import { useLogger } from '../core/hooks.ts';
 import { useParent } from '../core/ParentContext.tsx';
@@ -9,7 +9,7 @@ export type LinearGradientProps = {
   y?: number;
   colors: [
     offset: number,
-    color: `#${string}` | [r: number, g: number, b: number, a?: number],
+    color: ColorValue,
   ][];
   width: number | `${number}%`;
   height: number | `${number}%`;
@@ -43,7 +43,7 @@ export const LinearGradient: FunctionComponent<LinearGradientProps> = (
         endPoint,
         colors.map(([, color]) =>
           CanvasKit.Color(
-            ...(typeof color === 'string' ? hexToRgba(color) : color),
+            ...anyColorFormatToColor(color),
           )
         ),
         null,

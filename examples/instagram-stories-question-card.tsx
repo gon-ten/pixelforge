@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
-import { FontStyle, LoadFont } from '../components/LoadFont.tsx';
-import { Parragraph } from '../components/Parragraph.tsx';
+import { LoadFont } from '../components/LoadFont.tsx';
+import { Paragraph } from '../components/Paragraph.tsx';
 import {
   Container,
   generate,
@@ -16,14 +16,13 @@ function Image() {
     <Renderer width={480} height={854}>
       <LoadFont
         default
-        style={FontStyle.Regular}
-        family='Roboto'
-        src='./assets/Roboto-Regular.ttf'
+        family='NotoSans'
+        src='./assets/NotoSans-VariableFont.ttf'
       />
       <LoadFont
-        style={FontStyle.Bold}
-        family='Roboto'
-        src='./assets/Roboto-Bold.ttf'
+        default
+        family='NotoColorEmoji'
+        src='./assets/NotoColorEmoji-Regular.ttf'
       />
       <LinearGradient
         width='100%'
@@ -68,22 +67,22 @@ function Image() {
             />
           </Container>
         </Container>
-        <Text
+        <Paragraph
           color='#fff'
-          fontSize={72}
           y={854 * .6}
-          content='28'
           align='center'
-          fontStyle={FontStyle.Bold}
-        />
-        <Parragraph
+          fontSize={72}
+        >
+          <b>28🦦</b>
+        </Paragraph>
+        <Paragraph
           color='#fff'
           fontSize={16}
           y={854 - 32}
           align='center'
         >
-          Swipe up to ask me anything
-        </Parragraph>
+          Swipe up to me <b>anything</b>
+        </Paragraph>
       </LinearGradient>
     </Renderer>
   );

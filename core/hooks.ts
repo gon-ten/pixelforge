@@ -69,7 +69,7 @@ export const useFontManager = (): FontManager => {
         return defaultFont;
       }
 
-      const typeface = typefaces[family]?.[style];
+      const typeface = typefaces[family]?.styles[style]?.typeface;
 
       if (!typeface) {
         log(`Font ${family} is not loaded. Using default font`);
