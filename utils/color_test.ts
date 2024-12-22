@@ -1,6 +1,8 @@
 import {
+  anyColorFormatToColor,
   colorStringToRgbaColor,
   hexToRgba,
+  RgbaColor,
   rgbaColorStringToRgbaColor,
 } from './color.ts';
 import { assertEquals, assertThrows } from '@std/assert';
@@ -98,6 +100,26 @@ Deno.test('colorStringToRgbaColor', async (t) => {
   await t.step('rgba color', () => {
     const colorStr = 'rgba(255, 0, 0, 1)';
     const rgba = colorStringToRgbaColor(colorStr);
+    assertEquals(rgba, [255, 0, 0, 1]);
+  });
+});
+
+Deno.test('anyColorFormatToColor', async (t) => {
+  await t.step('hex color', () => {
+    const colorStr = '#ff0000';
+    const rgba = anyColorFormatToColor(colorStr);
+    assertEquals(rgba, [255, 0, 0, 1]);
+  });
+
+  await t.step('rgba color', () => {
+    const colorStr = 'rgba(255, 0, 0, 1)';
+    const rgba = anyColorFormatToColor(colorStr);
+    assertEquals(rgba, [255, 0, 0, 1]);
+  });
+
+  await t.step('rgba color array', () => {
+    const colorStr: RgbaColor = [255, 0, 0, 1];
+    const rgba = anyColorFormatToColor(colorStr);
     assertEquals(rgba, [255, 0, 0, 1]);
   });
 });

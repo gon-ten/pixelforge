@@ -5,6 +5,15 @@ export type RgbaColor = [r: number, g: number, b: number, a: number];
 
 export type HexColorString = `#${string}`;
 
+export type ColorValue = RgbaColor | HexColorString | RgbaColorString;
+
+export function anyColorFormatToColor(value: ColorValue): RgbaColor {
+  if (typeof value === 'string') {
+    return colorStringToRgbaColor(value);
+  }
+  return value;
+}
+
 function isShortHex(hex: string): boolean {
   return hex.length === 4;
 }
